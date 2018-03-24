@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="renderer" content="webkit" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <title>正弦运动</title>
+    <style>
+    #ball {
+        width: 50px;
+        height: 50px;
+        background: red;
+        position: absolute;
+        left: 0;
+        top: 300px;
+        border-radius: 50%;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="ball"></div>
+    <script>
+    // 事件绑定
+    function bindEvent(ele, type, fn) {
+        if (ele.attachEvent) {
+            ele.attachEvent('on' + type, function() {
+                fn.call(ele);
+            })
+
+
+        } else {
+            ele.addEventListener(type, fn, false);
+        }
+    }
+
+    var ball = document.getElementById('ball');
+    bindEvent(ball, 'click', function() {
+        var distance = 200;
+        var duration = 2000;
+        var startTime = Date.now();
+        var self = this;
+        if (!self.off) {
+            requestAnimationFrame(function() {
+                self.off = true;
+                var p = Math.min(1, (Date.now() - startTime) / duration);
+                var y = distance * Math.sin(2 * Math.PI * p);
+                var x = 2 * distance * p;
+                self.style.transform = 'translate(' + x + 'px' + ',' + y + 'px)';
+                if (p < 1) {
+                    requestAnimationFrame(arguments.callee);
+                } else {
+                    self = false;
+                }
+            });
+        }
+
+    });
+
+
+    // Polyfill
+    if (!window.requestAnimationFrame) {
+        window.requestAnimationFrame = function(callback) {
+            clearTimeout(timer);
+            timer = setTimeout(function() {
+                callback();
+            }, 10);
+        };
+
+    }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="renderer" content="webkit" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <title>抛物线运动</title>
+    <style>
+    #ball {
+        width: 100px;
+        height: 100px;
+        background: red;
+        position: absolute;
+        left: 0;
+        top: 100px;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="ball"></div>
+    <script>
+    // 事件绑定
+    function bindEvent(ele, type, fn) {
+        if (ele.attachEvent) {
+            ele.attachEvent('on' + type, function() {
+                fn.call(ele);
+            })
+
+
+        } else {
+            ele.addEventListener(type, fn, false);
+        }
+    }
+
+    var ball = document.getElementById('ball');
+    bindEvent(ball, 'click', function() {
+        var startTime = Date.now();
+        var disX = 400;
+        var disY = 400;
+        var duration = .5 * 1000 * Math.sqrt(2 * disY / 98);
+        //乘以0.5可以让速度变快些
+        var self = this;
+        if (!self.off) {
+            requestAnimationFrame(function() {
+                self.off = true;
+                var p = Math.min(1, (Date.now() - startTime) / duration);
+                var x = disX * p;
+                var y = disY * p * p;
+                self.style.transform = 'translate(' + x + 'px' + ',' + y + 'px)';
+                if (p < 1) {
+                    requestAnimationFrame(arguments.callee);
+                } else {
+                    self = false;
+                }
+            });
+        }
+
+    });
+
+    // Polyfill
+    if (!window.requestAnimationFrame) {
+        window.requestAnimationFrame = function(callback) {
+            clearTimeout(timer);
+            timer = setTimeout(function() {
+                callback();
+            }, 10);
+        };
+
+    }
+    </script>
+</body>
+
+</html>
